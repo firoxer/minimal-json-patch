@@ -1,0 +1,27 @@
+{
+  "name": "minimal-json-patch",
+  "version": "0.0.1",
+  "description": "Minimal implementation of JSON Patch (RFC 6902) in JavaScript",
+  "source": "src/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "type": "module",
+  "scripts": {
+    "build": "rm -rf build && npx microbundle --format es",
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/firoxer/minimal-json-patch-js.git"
+  },
+  "author": "Oliver Vartiainen <oliver@iki.fi>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/firoxer/minimal-json-patch-js/issues"
+  },
+  "homepage": "https://github.com/firoxer/minimal-json-patch-js#readme",
+  "devDependencies": {
+    "microbundle": "^0.12.4",
+    "prettier": "^2.2.0"
+  }
+}
