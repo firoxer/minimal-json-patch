@@ -550,3 +550,5 @@ assert.doesNotThrow(() => {
 
   assert.deepStrictEqual(original, { a: { b: { c: 41 } } });
 }
+
+console.debug('ok')
