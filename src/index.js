@@ -191,7 +191,12 @@ export function apply(document, patch) {
             throw new JsonPatchError('missing from');
           }
 
-          if (createFromPointer().isPrefixOf(createPathPointer())) {
+          if (operation.from === operation.path) {
+            // No-op
+            break;
+          }
+
+          if (createFromPointer().isPrefixTo(createPathPointer())) {
             throw new JsonPatchError(
               'from pointer cannot be a prefix of path pointer'
             );
