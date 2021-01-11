@@ -174,7 +174,7 @@ export function apply(document, patch) {
           }
 
           const value = get(wrappedDocument, createFromPointer());
-          wrappedDocument = replace(
+          wrappedDocument = add(
             wrappedDocument,
             createPathPointer(),
             value
