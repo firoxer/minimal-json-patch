@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 
-import { apply, JsonPatchError } from './src/index.js';
+import { applyPatch, JsonPatchError } from './src/index.js';
 
 // 1.  Introduction
 //
@@ -58,7 +58,7 @@ import { apply, JsonPatchError } from './src/index.js';
 {
   const original = { overwritten: 1, overwriter: 2 };
 
-  const modified = apply(original, [
+  const modified = applyPatch(original, [
     { op: 'copy', from: '/overwritten', path: '/final' },
     { op: 'copy', from: '/overwriter', path: '/final' },
   ]);
@@ -73,15 +73,15 @@ import { apply, JsonPatchError } from './src/index.js';
 // "remove", "replace", "move", "copy", or "test"; other values are
 // errors.  The semantics of each object is defined below.
 assert.throws(() => {
-  apply({}, [{ path: '/a', value: 1 }]);
+  applyPatch({}, [{ path: '/a', value: 1 }]);
 }, new JsonPatchError('illegal op: should be add/copy/move/remove/replace/test, was undefined'));
 
 assert.throws(() => {
-  apply({}, [{ op: 'illegal', path: '/a', value: 1 }]);
+  applyPatch({}, [{ op: 'illegal', path: '/a', value: 1 }]);
 }, new JsonPatchError('illegal op: should be add/copy/move/remove/replace/test, was "illegal"'));
 
 assert.throws(() => {
-  apply({}, [{ op: 123, path: '/a', value: 1 }]);
+  applyPatch({}, [{ op: 123, path: '/a', value: 1 }]);
 }, new JsonPatchError('illegal op: should be add/copy/move/remove/replace/test, was 123'));
 //
 // Additionally, operation objects MUST have exactly one "path" member.
@@ -89,19 +89,19 @@ assert.throws(() => {
 // [RFC6901] that references a location within the target document (the
 // "target location") where the operation is performed.
 assert.throws(() => {
-  apply({}, [{ op: 'add', value: 1 }]);
+  applyPatch({}, [{ op: 'add', value: 1 }]);
 }, new JsonPatchError('add failed: bad path: should be a string, was undefined'));
 
 assert.throws(() => {
-  apply({}, [{ op: 'add', path: 'invalid path', value: 1 }]);
+  applyPatch({}, [{ op: 'add', path: 'invalid path', value: 1 }]);
 }, new JsonPatchError('add failed: bad path: should be "" or start with "/"'));
 
 assert.throws(() => {
-  apply({}, [{ op: 'add', path: null, value: 1 }]);
+  applyPatch({}, [{ op: 'add', path: null, value: 1 }]);
 }, new JsonPatchError('add failed: bad path: should be a string, was object'));
 
 assert.throws(() => {
-  apply({ a: { b: 1 } }, [{ op: 'add', path: '/nonexistent/path', value: 1 }]);
+  applyPatch({ a: { b: 1 } }, [{ op: 'add', path: '/nonexistent/path', value: 1 }]);
 }, new JsonPatchError('add failed: pointer leads to an element that is neither an array nor an object but undefined'));
 //
 // The meanings of other operation object members are defined by
@@ -112,7 +112,7 @@ assert.throws(() => {
 assert.doesNotThrow(() => {
   const document = {};
 
-  apply(document, [
+  applyPatch(document, [
     { op: 'add', path: '/valid-path', value: 1, from: '/superfluous' },
   ]);
 });
@@ -126,13 +126,13 @@ assert.doesNotThrow(() => {
 {
   const original = { a: { b: {} } };
 
-  const modified1 = apply(original, [
+  const modified1 = applyPatch(original, [
     { op: 'add', path: '/a/b/c', value: 'foo' },
   ]);
-  const modified2 = apply(original, [
+  const modified2 = applyPatch(original, [
     { path: '/a/b/c', op: 'add', value: 'foo' },
   ]);
-  const modified3 = apply(original, [
+  const modified3 = applyPatch(original, [
     { value: 'foo', path: '/a/b/c', op: 'add' },
   ]);
 
@@ -147,21 +147,21 @@ assert.doesNotThrow(() => {
 {
   const original = { '~': 'a' };
 
-  const modified = apply(original, [{ op: 'add', path: '/~0', value: 'b' }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/~0', value: 'b' }]);
 
   assert.deepStrictEqual(modified, { '~': 'b' });
 }
 {
   const original = { '/': 'a' };
 
-  const modified = apply(original, [{ op: 'add', path: '/~1', value: 'b' }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/~1', value: 'b' }]);
 
   assert.deepStrictEqual(modified, { '/': 'b' });
 }
 {
   const original = { '~/': 'a' };
 
-  const modified = apply(original, [{ op: 'add', path: '/~0~1', value: 'b' }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/~0~1', value: 'b' }]);
 
   assert.deepStrictEqual(modified, { '~/': 'b' });
 }
@@ -176,7 +176,7 @@ assert.doesNotThrow(() => {
 {
   const original = ['a', 'c'];
 
-  const modified = apply(original, [{ op: 'add', path: '/1', value: 'b' }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/1', value: 'b' }]);
 
   assert.deepStrictEqual(modified, ['a', 'b', 'c']);
 }
@@ -186,7 +186,7 @@ assert.doesNotThrow(() => {
 {
   const original = {};
 
-  const modified = apply(original, [{ op: 'add', path: '/a', value: 1 }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/a', value: 1 }]);
 
   assert.deepStrictEqual(modified, { a: 1 });
 }
@@ -196,7 +196,7 @@ assert.doesNotThrow(() => {
 {
   const original = { a: 1 };
 
-  const modified = apply(original, [{ op: 'add', path: '/a', value: 2 }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/a', value: 2 }]);
 
   assert.deepStrictEqual(modified, { a: 2 });
 }
@@ -204,7 +204,7 @@ assert.doesNotThrow(() => {
 // The operation object MUST contain a "value" member whose content
 // specifies the value to be added.
 assert.throws(() => {
-  apply({}, [{ op: 'add', path: '/a' }]);
+  applyPatch({}, [{ op: 'add', path: '/a' }]);
 }, new JsonPatchError('add failed: missing value'));
 //
 // For example:
@@ -219,7 +219,7 @@ assert.throws(() => {
 {
   const original = { a: 1 };
 
-  const modified = apply(original, [{ op: 'add', path: '', value: { b: 2 } }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '', value: { b: 2 } }]);
 
   assert.deepStrictEqual(modified, { b: 2 });
 }
@@ -239,20 +239,20 @@ assert.throws(() => {
 //    index the end of the array (see [RFC6901]), this has the effect of
 //    appending the value to the array.
 assert.throws(() => {
-  apply([1, 2], [{ op: 'add', path: '/4', value: 'd' }]);
+  applyPatch([1, 2], [{ op: 'add', path: '/4', value: 'd' }]);
 }, new JsonPatchError('add failed: pointer points to an index that is out-of-bounds'));
 
 {
   const original = [];
 
-  const modified = apply(original, [{ op: 'add', path: '/-', value: 'a' }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/-', value: 'a' }]);
 
   assert.deepStrictEqual(modified, ['a']);
 }
 {
   const original = ['a', 'b'];
 
-  const modified = apply(original, [{ op: 'add', path: '/-', value: 'c' }]);
+  const modified = applyPatch(original, [{ op: 'add', path: '/-', value: 'c' }]);
 
   assert.deepStrictEqual(modified, ['a', 'b', 'c']);
 }
@@ -279,13 +279,13 @@ assert.throws(() => {
 assert.doesNotThrow(() => {
   const document = { a: { foo: 1 } };
 
-  apply(document, [{ op: 'add', path: '/a/b', value: 2 }]);
+  applyPatch(document, [{ op: 'add', path: '/a/b', value: 2 }]);
 });
 
 assert.throws(() => {
   const document = { q: { bar: 2 } };
 
-  apply(document, [{ op: 'add', path: '/a/b', value: 2 }]);
+  applyPatch(document, [{ op: 'add', path: '/a/b', value: 2 }]);
 }, new JsonPatchError('add failed: pointer leads to an element that is neither an array nor an object but undefined'));
 //
 // 4.2.  remove
@@ -296,7 +296,7 @@ assert.throws(() => {
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'remove', path: '/b' }]);
+  applyPatch(document, [{ op: 'remove', path: '/b' }]);
 }, new JsonPatchError('remove failed: pointer does not lead anywhere'));
 //
 // For example:
@@ -308,7 +308,7 @@ assert.throws(() => {
 {
   const original = ['a', 'b', 'x', 'c'];
 
-  const modified = apply(original, [{ op: 'remove', path: '/2' }]);
+  const modified = applyPatch(original, [{ op: 'remove', path: '/2' }]);
 
   assert.deepStrictEqual(modified, ['a', 'b', 'c']);
 }
@@ -321,14 +321,14 @@ assert.throws(() => {
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'replace', path: '/a' }]);
+  applyPatch(document, [{ op: 'replace', path: '/a' }]);
 }, new JsonPatchError('replace failed: missing value'));
 //
 // The target location MUST exist for the operation to be successful.
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'replace', path: '/b', value: 2 }]);
+  applyPatch(document, [{ op: 'replace', path: '/b', value: 2 }]);
 }, new JsonPatchError('replace failed: pointer points to a nonexistent location'));
 //
 // For example:
@@ -341,10 +341,10 @@ assert.throws(() => {
 {
   const original = { a: { b: { c: 41 } } };
 
-  const modified1 = apply(original, [
+  const modified1 = applyPatch(original, [
     { op: 'replace', path: '/a/b/c', value: 42 },
   ]);
-  const modified2 = apply(original, [
+  const modified2 = applyPatch(original, [
     { op: 'remove', path: '/a/b/c' },
     { op: 'add', path: '/a/b/c', value: 42 },
   ]);
@@ -363,14 +363,14 @@ assert.throws(() => {
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'move', path: '/a' }]);
+  applyPatch(document, [{ op: 'move', path: '/a' }]);
 }, new JsonPatchError('move failed: missing from'));
 //
 // The "from" location MUST exist for the operation to be successful.
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'move', path: '/a', from: '/b' }]);
+  applyPatch(document, [{ op: 'move', path: '/a', from: '/b' }]);
 }, new JsonPatchError('move failed: pointer does not lead anywhere'));
 //
 // For example:
@@ -383,10 +383,10 @@ assert.throws(() => {
 {
   const original = { a: { b: { c: 123 } } };
 
-  const modified1 = apply(original, [
+  const modified1 = applyPatch(original, [
     { op: 'move', from: '/a/b/c', path: '/a/b/d' },
   ]);
-  const modified2 = apply(original, [
+  const modified2 = applyPatch(original, [
     { op: 'remove', path: '/a/b/c' },
     { op: 'add', path: '/a/b/d', value: 123 },
   ]);
@@ -399,7 +399,7 @@ assert.throws(() => {
 assert.throws(() => {
   const document = { a: { b: 1 } };
 
-  apply(document, [{ op: 'move', from: '/a', path: '/a/b' }]);
+  applyPatch(document, [{ op: 'move', from: '/a', path: '/a/b' }]);
 }, new JsonPatchError('move failed: from pointer cannot be a prefix of path pointer'));
 //
 // 4.5.  copy
@@ -413,14 +413,14 @@ assert.throws(() => {
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'copy', path: '/a' }]);
+  applyPatch(document, [{ op: 'copy', path: '/a' }]);
 }, new JsonPatchError('copy failed: missing from'));
 //
 // The "from" location MUST exist for the operation to be successful.
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'copy', path: '/a', from: '/b' }]);
+  applyPatch(document, [{ op: 'copy', path: '/a', from: '/b' }]);
 }, new JsonPatchError('copy failed: pointer does not lead anywhere'));
 //
 // For example:
@@ -432,10 +432,10 @@ assert.throws(() => {
 {
   const original = { a: { b: { c: 123 } } };
 
-  const modified1 = apply(original, [
+  const modified1 = applyPatch(original, [
     { op: 'copy', from: '/a/b/c', path: '/a/b/e' },
   ]);
-  const modified2 = apply(original, [
+  const modified2 = applyPatch(original, [
     { op: 'add', path: '/a/b/e', value: 123 },
   ]);
 
@@ -452,7 +452,7 @@ assert.throws(() => {
 assert.throws(() => {
   const document = { a: 1 };
 
-  apply(document, [{ op: 'test', path: '/a' }]);
+  applyPatch(document, [{ op: 'test', path: '/a' }]);
 }, new JsonPatchError('test failed: missing value'));
 //
 // The target location MUST be equal to the "value" value for the
@@ -465,13 +465,13 @@ assert.throws(() => {
 // o  strings: are considered equal if they contain the same number of
 //    Unicode characters and their code points are byte-by-byte equal.
 assert.doesNotThrow(() => {
-  apply({ a: 'abc' }, [{ op: 'test', path: '/a', value: 'abc' }]);
+  applyPatch({ a: 'abc' }, [{ op: 'test', path: '/a', value: 'abc' }]);
 });
 //
 // o  numbers: are considered equal if their values are numerically
 //    equal.
 assert.doesNotThrow(() => {
-  apply({ a: 123 }, [{ op: 'test', path: '/a', value: 123 }]);
+  applyPatch({ a: 123 }, [{ op: 'test', path: '/a', value: 123 }]);
 });
 //
 // o  arrays: are considered equal if they contain the same number of
@@ -479,7 +479,7 @@ assert.doesNotThrow(() => {
 //    the corresponding position in the other array, using this list of
 //    type-specific rules.
 assert.doesNotThrow(() => {
-  apply({ a: [1, 'b', true] }, [
+  applyPatch({ a: [1, 'b', true] }, [
     { op: 'test', path: '/a', value: [1, 'b', true] },
   ]);
 });
@@ -489,7 +489,7 @@ assert.doesNotThrow(() => {
 //    the other object, by comparing their keys (as strings) and their
 //    values (using this list of type-specific rules).
 assert.doesNotThrow(() => {
-  apply({ a: { b1: 1, b2: 'b', b3: true } }, [
+  applyPatch({ a: { b1: 1, b2: 'b', b3: true } }, [
     { op: 'test', path: '/a', value: { b1: 1, b2: 'b', b3: true } },
   ]);
 });
@@ -497,13 +497,13 @@ assert.doesNotThrow(() => {
 // o  literals (false, true, and null): are considered equal if they are
 //    the same.
 assert.doesNotThrow(() => {
-  apply({ a: false }, [{ op: 'test', path: '/a', value: false }]);
+  applyPatch({ a: false }, [{ op: 'test', path: '/a', value: false }]);
 });
 assert.doesNotThrow(() => {
-  apply({ a: true }, [{ op: 'test', path: '/a', value: true }]);
+  applyPatch({ a: true }, [{ op: 'test', path: '/a', value: true }]);
 });
 assert.doesNotThrow(() => {
-  apply({ a: null }, [{ op: 'test', path: '/a', value: null }]);
+  applyPatch({ a: null }, [{ op: 'test', path: '/a', value: null }]);
 });
 //
 // Note that the comparison that is done is a logical comparison; e.g.,
@@ -540,7 +540,7 @@ assert.doesNotThrow(() => {
   const original = { a: { b: { c: 41 } } };
 
   try {
-    apply(original, [
+    applyPatch(original, [
       { op: 'replace', path: '/a/b/c', value: 42 },
       { op: 'test', path: '/a/b/c', value: 'C' },
     ]);

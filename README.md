@@ -5,13 +5,13 @@ An implementation of [RFC 6902](https://tools.ietf.org/html/rfc6902) without bel
 ## Usage
 
 ```javascript
-import { apply } from 'minimal-json-patch';
+import { applyPatch } from 'minimal-json-patch';
 
 const originalDocument = {
   letters: ['a', 'b', 'd'],
 };
 
-const modifiedDocument = apply(originalDocument, [
+const modifiedDocument = applyPatch(originalDocument, [
   { op: 'add', path: '/letters/2', value: 'c' },
 ]);
 

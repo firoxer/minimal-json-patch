@@ -50,6 +50,6 @@ type Operation =
   | ReplaceOperation
   | TestOperation;
 
-export function apply(document: JsonValue, patch: Operation[]): JsonValue;
+export function applyPatch(document: JsonValue, patch: Operation[]): JsonValue;
 
 export class JsonPatchError extends Error {}

@@ -291,7 +291,7 @@ function applyOperation(document, operation) {
   }
 }
 
-export function apply(document, patch) {
+export function applyPatch(document, patch) {
   if (!Array.isArray(patch)) {
     throw new JsonPatchError('bad patch: should be an array of operations');
   }
