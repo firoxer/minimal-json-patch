@@ -7,20 +7,22 @@ function validatePath(path) {
       `bad path: should be a string, was ${typeof path}`
     );
   }
+
   if (path[0] !== '/' && path !== '') {
     throw new JsonPatchError('bad path: should be "" or start with "/"');
   }
 }
 
-function parseTokenString(tokenString, contextItem) {
-  if (isObject(contextItem)) {
-    const decodedTokenString = tokenString
-      .replace('~1', '/')
-      .replace('~0', '~');
+function parseTokenString(tokenString, context) {
+  if (isObject(context)) {
+    const decodedTokenString =
+      tokenString
+        .replace('~1', '/')
+        .replace('~0', '~');
     return decodedTokenString;
-  } else if (isArray(contextItem)) {
+  } else if (isArray(context)) {
     if (tokenString === '-') {
-      return contextItem.length;
+      return context.length;
     }
 
     const tokenNumber = parseInt(tokenString, 10);
@@ -34,25 +36,20 @@ function parseTokenString(tokenString, contextItem) {
     return tokenNumber;
   } else {
     throw new JsonPatchError(
-      `token context should either be an array or a string, was ${typeof contextItem}`
+      `token context should either be an array or a string, was ${typeof context}`
     );
   }
 }
 
 export class Pointer {
-  constructor(path, prefix) {
+  constructor(path) {
     validatePath(path);
 
     this.tokenStrings = path.split('/').slice(1);
     this.nextTokenIndex = 0;
-
-    if (prefix !== undefined) {
-      validatePath(prefix);
-      this.tokenStrings = [...prefix.split('/').slice(1), ...this.tokenStrings];
-    }
   }
 
-  isPrefixOf(anotherPointer) {
+  isPrefixTo(anotherPointer) {
     if (!(anotherPointer instanceof Pointer)) {
       throw new JsonPatchError(
         `arg is not a pointer, was ${typeof anotherPointer}`
@@ -91,5 +88,9 @@ export class Pointer {
     ++this.nextTokenIndex;
 
     return parseTokenString(tokenString, contextItem);
+  }
+
+  rewind() {
+    this.nextTokenIndex = 0;
   }
 }

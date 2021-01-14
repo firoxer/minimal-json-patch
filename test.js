@@ -102,7 +102,7 @@ assert.throws(() => {
 
 assert.throws(() => {
   apply({ a: { b: 1 } }, [{ op: 'add', path: '/nonexistent/path', value: 1 }]);
-}, new JsonPatchError('add failed: path leads to an element that is neither an array nor an object but undefined'));
+}, new JsonPatchError('add failed: pointer leads to an element that is neither an array nor an object but undefined'));
 //
 // The meanings of other operation object members are defined by
 // operation (see the subsections below).  Members that are not
@@ -240,7 +240,7 @@ assert.throws(() => {
 //    appending the value to the array.
 assert.throws(() => {
   apply([1, 2], [{ op: 'add', path: '/4', value: 'd' }]);
-}, new JsonPatchError('add failed: path points to an index that is out-of-bounds'));
+}, new JsonPatchError('add failed: pointer points to an index that is out-of-bounds'));
 
 {
   const original = [];
@@ -286,7 +286,7 @@ assert.throws(() => {
   const document = { q: { bar: 2 } };
 
   apply(document, [{ op: 'add', path: '/a/b', value: 2 }]);
-}, new JsonPatchError('add failed: path leads to an element that is neither an array nor an object but undefined'));
+}, new JsonPatchError('add failed: pointer leads to an element that is neither an array nor an object but undefined'));
 //
 // 4.2.  remove
 //
@@ -297,7 +297,7 @@ assert.throws(() => {
   const document = { a: 1 };
 
   apply(document, [{ op: 'remove', path: '/b' }]);
-}, new JsonPatchError('remove failed: path does not lead anywhere'));
+}, new JsonPatchError('remove failed: pointer does not lead anywhere'));
 //
 // For example:
 //
@@ -329,7 +329,7 @@ assert.throws(() => {
   const document = { a: 1 };
 
   apply(document, [{ op: 'replace', path: '/b', value: 2 }]);
-}, new JsonPatchError('replace failed: path points to a nonexistent location'));
+}, new JsonPatchError('replace failed: pointer points to a nonexistent location'));
 //
 // For example:
 //
@@ -371,7 +371,7 @@ assert.throws(() => {
   const document = { a: 1 };
 
   apply(document, [{ op: 'move', path: '/a', from: '/b' }]);
-}, new JsonPatchError('move failed: path does not lead anywhere'));
+}, new JsonPatchError('move failed: pointer does not lead anywhere'));
 //
 // For example:
 //
@@ -421,7 +421,7 @@ assert.throws(() => {
   const document = { a: 1 };
 
   apply(document, [{ op: 'copy', path: '/a', from: '/b' }]);
-}, new JsonPatchError('copy failed: path does not lead anywhere'));
+}, new JsonPatchError('copy failed: pointer does not lead anywhere'));
 //
 // For example:
 //

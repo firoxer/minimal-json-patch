@@ -23,4 +23,3 @@ console.log(modifiedDocument.letters);
 
 - Clearer error messages
 - More consistent error messages
-- Performance optimization
