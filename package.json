@@ -1,5 +1,5 @@
 {
-  "name": "minimal-json-patch",
+  "name": "@firoxer/minimal-json-patch",
   "version": "0.0.1",
   "description": "Minimal implementation of JSON Patch (RFC 6902) in JavaScript",
   "source": "src/index.js",
