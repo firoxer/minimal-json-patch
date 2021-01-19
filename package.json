@@ -28,6 +28,11 @@
     "url": "https://github.com/firoxer/minimal-json-patch-js/issues"
   },
   "homepage": "https://github.com/firoxer/minimal-json-patch-js#readme",
+  "keywords": [
+    "RFC6902",
+    "jsonpatch"
+  ],
+  "dependencies": {},
   "devDependencies": {
     "microbundle": "^0.12.4",
     "prettier": "^2.2.0"
