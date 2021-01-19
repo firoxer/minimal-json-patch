@@ -3,11 +3,19 @@
   "version": "0.0.1",
   "description": "Minimal implementation of JSON Patch (RFC 6902) in JavaScript",
   "source": "src/index.js",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/cjs/minimal-json-patch.js",
+  "module": "dist/esm/minimal-json-patch.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/minimal-json-patch.js",
+      "default": "./dist/esm/minimal-json-patch.js"
+    }
+  },
   "scripts": {
-    "build": "rm -rf build && npx microbundle --format es",
+    "build-esm": "rm -f dist/esm/minimal-json-patch.js dist/esm/minimal-json-patch.js.map && npx microbundle --format esm --output dist/esm",
+    "build-cjs": "rm -f dist/cjs/minimal-json-patch.js dist/cjs/minimal-json-patch.js.map && npx microbundle --format cjs --output dist/cjs",
+    "build": "npm run build-esm && npm run build-cjs",
     "test": "node test.js"
   },
   "repository": {
