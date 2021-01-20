@@ -20,14 +20,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/firoxer/minimal-json-patch-js.git"
+    "url": "git+ssh://git@github.com/firoxer/minimal-json-patch.git"
   },
   "author": "Oliver Vartiainen <oliver@iki.fi>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/firoxer/minimal-json-patch-js/issues"
+    "url": "https://github.com/firoxer/minimal-json-patch/issues"
   },
-  "homepage": "https://github.com/firoxer/minimal-json-patch-js#readme",
+  "homepage": "https://github.com/firoxer/minimal-json-patch#readme",
   "keywords": [
     "RFC6902",
     "jsonpatch"
