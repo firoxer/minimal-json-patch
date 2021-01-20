@@ -86,7 +86,7 @@ function replace(element, pointer, value) {
 
   if (isArray(element)) {
     const newElement = [...element];
-    newElement.splice(index, 1, modifiedMember);
+    newElement[index] = modifiedMember;
     return newElement;
   } else {
     const newElement = { ...element };
@@ -126,7 +126,7 @@ function remove(element, pointer) {
 
   if (isArray(element)) {
     const newElement = [...element];
-    newElement.splice(index, 1, modifiedMember);
+    newElement[index] = modifiedMember;
     return newElement;
   } else {
     const newElement = { ...element };
